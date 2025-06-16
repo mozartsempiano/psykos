@@ -57,7 +57,7 @@
 
 ## Usage
 
-1. Add the Tumblr blog titles to the `tumblrs.txt` file, separated by commas:
+1. Create and add the Tumblr blog titles to the `tumblrs.txt` file, separated by commas:
 
    ```
    blog1, blog2, blog3
