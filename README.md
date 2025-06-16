@@ -4,8 +4,6 @@
 
 **[Psykos](https://bsky.app/profile/psykos.bsky.social)** is an automated bot that fetches random images from Tumblr, analyzes their aesthetics, and posts them on Bluesky. It uses advanced APIs and libraries to ensure an efficient and secure experience.
 
----
-
 ## Features
 
 - Fetches random images from Tumblr blogs.
@@ -13,8 +11,6 @@
 - Detects unwanted themes in captions and images.
 - Publishes images on Bluesky with clean captions and alt text.
 - Logs history of approved and rejected posts.
-
----
 
 ## Installation
 
@@ -53,8 +49,6 @@
    TESSERACT_CMD = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
    ```
 
----
-
 ## Usage
 
 1. Create and add the Tumblr blog titles to the `tumblrs.txt` file, separated by commas:
@@ -70,8 +64,6 @@
    ```
 
 3. The bot will fetch images, apply filters, and post to Bluesky automatically.
-
----
 
 ## Contributing
 
@@ -92,15 +84,11 @@ Contributions are welcome! To contribute:
    ```
 5. Open a Pull Request.
 
----
-
 ## Contact
 
 - [mozartmt@protonmail.com](mailto:mozartmt@protonmail.com)
 - Twitter: [@mozartsempiano](https://twitter.com/mozartsempiano)
 - Bluesky: [‪@mozartsempiano.bsky.social‬](https://bsky.app/profile/mozartsempiano.bsky.social)
-
----
 
 ## License
 
