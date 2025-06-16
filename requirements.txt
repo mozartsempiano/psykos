@@ -1,0 +1,9 @@
+requests
+termcolor
+pytesseract
+Pillow
+atproto
+pytumblr
+beautifulsoup4
+transformers
+torch

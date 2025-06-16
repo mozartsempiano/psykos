@@ -1,0 +1,24 @@
+# Arquivo de variáveis sensíveis
+.env
+
+# Arquivos temporários do sistema
+.DS_Store
+Thumbs.db
+
+# Cache do Python
+__pycache__/
+*.pyc
+
+# Pastas do VSCode ou outros editores
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Outros
+*.bat
+*.json
+*-backup.*
+tumblrs.txt
+purge/
