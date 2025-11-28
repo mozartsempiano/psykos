@@ -1,5 +1,3 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/V7V81FVVVI)
-
 # Psykos
 
 **[Psykos](https://bsky.app/profile/psykos.bsky.social)** is an automated bot that fetches random images from Tumblr, analyzes their aesthetics, and posts them on Bluesky. It uses advanced APIs and libraries to ensure an efficient and secure experience.
@@ -83,13 +81,7 @@ Contributions are welcome! To contribute:
    git push origin my-feature
    ```
 5. Open a Pull Request.
-
-## Contact
-
-- [mozartmt@protonmail.com](mailto:mozartmt@protonmail.com)
-- Twitter: [@mozartsempiano](https://twitter.com/mozartsempiano)
-- Bluesky: [‪@mozartsempiano.bsky.social‬](https://bsky.app/profile/mozartsempiano.bsky.social)
-
+6. 
 ## License
 
 This project is licensed under the [GNU GPLv3 License](LICENSE).
