@@ -7,3 +7,4 @@ pytumblr
 beautifulsoup4
 transformers
 torch
+python-dotenv

@@ -8,6 +8,12 @@ load_dotenv()
 # Bluesky
 BLUESKY_HANDLE = os.getenv('BLUESKY_HANDLE')
 BLUESKY_APP_PASSWORD = os.getenv('BLUESKY_APP_PASSWORD')
+# Instagram Graph API
+INSTAGRAM_ACCOUNT_ID = os.getenv("INSTAGRAM_ACCOUNT_ID")
+INSTAGRAM_ACCESS_TOKEN = os.getenv("INSTAGRAM_ACCESS_TOKEN")
+INSTAGRAM_REEL_BLOGS = [
+    blog.strip() for blog in os.getenv("INSTAGRAM_REEL_BLOGS", "").split(",") if blog.strip()
+]
 # Tumblr
 TUMBLR_CONSUMER_KEY = os.getenv("TUMBLR_CONSUMER_KEY")
 TUMBLR_SECRET_KEY  = os.getenv("TUMBLR_SECRET_KEY")

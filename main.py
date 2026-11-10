@@ -25,11 +25,13 @@ from config import (
     MAX_SIZE,
     QUALIDADE_COMPRIMIDA,
     TEMAS_INDESEJADOS,
-    INTERVAL_SECONDS # novo: intervalo em segundos
+    INTERVAL_SECONDS, # novo: intervalo em segundos
+    INSTAGRAM_REEL_BLOGS,
 )
 from utils import cor, clean_caption
 from filtros import filtrar_estetica
 from analytics import salvar_post
+from instagram import instagram_configured, post_reel
 
 # Caminho do executável do Tesseract
 pytesseract.pytesseract.tesseract_cmd = TESSERACT_CMD
@@ -78,11 +80,12 @@ def init_bsky():
 
 # Cache de total_posts por blog
 _total_posts_cache = {}
-def get_total_posts(blog):
-    if blog not in _total_posts_cache:
-        info = tumblr_client.posts(blog, type="photo", limit=1)
-        _total_posts_cache[blog] = info.get("total_posts", 0)
-    return _total_posts_cache[blog]
+def get_total_posts(blog, post_type="photo"):
+    cache_key = (blog, post_type)
+    if cache_key not in _total_posts_cache:
+        info = tumblr_client.posts(blog, type=post_type, limit=1)
+        _total_posts_cache[cache_key] = info.get("total_posts", 0)
+    return _total_posts_cache[cache_key]
 
 def get_random_image_from_tumblr():
     blogs = load_tumblr_blogs(TUMBLR_LIST_FILE)
@@ -164,6 +167,48 @@ def get_random_image_from_tumblr():
             continue
 
     raise RuntimeError("Nenhuma imagem válida encontrada em todos os blogs listados.")
+
+def get_random_video_from_tumblr():
+    blogs = load_tumblr_blogs(TUMBLR_LIST_FILE)
+    allowed_blogs = {
+        blog.lower() if "." in blog else f"{blog.lower()}.tumblr.com"
+        for blog in INSTAGRAM_REEL_BLOGS
+    }
+    blogs = [blog for blog in blogs if blog.lower() in allowed_blogs]
+    if not blogs:
+        raise RuntimeError(
+            "Nenhum blog autorizado para Reels corresponde aos blogs de tumblrs.txt."
+        )
+    random.shuffle(blogs)
+
+    for blog in blogs:
+        try:
+            total = get_total_posts(blog, post_type="video")
+            if total < 1:
+                continue
+
+            tentativas = min(10, total)
+            for _ in range(tentativas):
+                idx = random.randrange(total)
+                response = tumblr_client.posts(blog, type="video", limit=1, offset=idx)
+                posts = response.get("posts", [])
+                if not posts:
+                    continue
+
+                post = posts[0]
+                video_url = post.get("video_url")
+                if not isinstance(video_url, str) or not video_url.startswith("https://"):
+                    continue
+
+                caption = strip_html(post.get("caption", "") or "")
+                caption = re.sub(r"[\r\n]+", " ", caption)
+                original_link = post.get("post_url", "")
+                return video_url, caption, original_link, blog
+        except Exception as e:
+            print(f"Erro ao buscar vídeo de {blog}: {e}")
+            time.sleep(0.25)
+
+    return None
 
 # Verifica se a imagem é um placeholder de remoção do Tumblr
 def is_removed_placeholder(image_path):
@@ -341,11 +386,35 @@ def main():
             intervalo_str = f"{hours}h"
     # time.sleep(2)
     print(f"{cor.CIANO}Iniciando bot com intervalo de {intervalo_str}{cor.END}\n")
+    instagram_enabled = instagram_configured()
     init_bsky()
     clear()
     try:
+        last_instagram_attempt = None
         while True:
             print(f"\n{cor.AZUL}{'-'*48}{cor.END}")
+            if instagram_enabled:
+                reel_interval = max(INTERVAL_SECONDS, 900)
+                now = time.monotonic()
+                if last_instagram_attempt is None or now - last_instagram_attempt >= reel_interval:
+                    last_instagram_attempt = now
+                    print(f"{cor.AZUL}Buscando vídeo para publicar como Reel...{cor.END}")
+                    try:
+                        video = get_random_video_from_tumblr()
+                        if video is None:
+                            print(f"{cor.AMARELO}Nenhum vídeo válido encontrado; Reel pulado.{cor.END}")
+                        else:
+                            video_url, video_caption, video_link, video_blog = video
+                            print(f"{cor.VERDE}Vídeo encontrado:{cor.END} {video_url}")
+                            print(f"{cor.VERDE}Post original:{cor.END} {video_link}")
+                            print(f"{cor.VERDE}Blog de origem:{cor.END} {video_blog}")
+                            reel_id = post_reel(video_url, video_caption)
+                            print(f"\n{cor.VERDE}Reel publicado no Instagram!{cor.END} ID: {reel_id}")
+                    except Exception as e:
+                        print(f"\n{cor.VERMELHO}Erro ao publicar Reel no Instagram:{cor.END} {e}")
+                else:
+                    print(f"{cor.AMARELO}Intervalo mínimo entre tentativas de Reels ainda não atingido.{cor.END}")
+
             print(f"{cor.AZUL}Buscando imagem aleatória do Tumblr...{cor.END}")
             urls, caption, original_link, blog = get_random_image_from_tumblr()
             time.sleep(0.25)
